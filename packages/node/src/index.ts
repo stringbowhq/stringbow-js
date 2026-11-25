@@ -198,6 +198,14 @@ export class Stringbow {
   deleteSubject(id: string) {
     return this.call('DELETE', `/v1/subjects/${encodeURIComponent(id)}`);
   }
+  /**
+   * Remove every passkey of a subject. For YOUR account recovery, after you confirmed the user some other way
+   * (they lost the device their passkey is on). The next passkey they register is a first one again, so it needs
+   * no confirmation from an existing passkey: only call this when you are sure who you are talking to.
+   */
+  removePasskeys(id: string) {
+    return this.call<{ id: string; removed: number; passkeys: number }>('DELETE', `/v1/subjects/${encodeURIComponent(id)}/passkeys`);
+  }
 
   /**
    * Mint a short-lived token for the browser SDK. Call this from an authenticated route only.

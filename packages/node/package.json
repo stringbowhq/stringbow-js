@@ -1,6 +1,6 @@
 {
   "name": "@stringbow/node",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Stringbow Node SDK: subjects, browser tokens, decisions, permits and webhook verification",
   "license": "MIT",
   "homepage": "https://stringbow.dev/docs/node-sdk",

@@ -396,9 +396,24 @@ export class StringbowBrowser {
   }
 
   // ---------- passkeys and challenges ----------
-  /** Register a passkey for this user. Only works with a token your backend minted with allowPasskeyRegistration. */
+  /**
+   * Register a passkey for this user. Only works with a token your backend minted with allowPasskeyRegistration.
+   *
+   * A user who already has a passkey confirms with it first, so this shows two prompts: the existing passkey,
+   * then the new one. Someone who only holds the session cannot add a passkey of their own.
+   */
   async registerPasskey(): Promise<{ registered: boolean; passkeys: number }> {
-    const optionsJSON = await this.call<any>('POST', '/v1/passkeys/registration/options', {});
+    const start = () => this.call<any>('POST', '/v1/passkeys/registration/options', {});
+    let optionsJSON: any;
+    try {
+      optionsJSON = await start();
+    } catch (e) {
+      if (!(e instanceof StringbowBrowserError) || e.code !== 'passkey.confirmation_required') throw e;
+      const confirm = await this.call<any>('POST', '/v1/passkeys/registration/confirm/options', {});
+      const proof = await startAuthentication({ optionsJSON: confirm });
+      await this.call('POST', '/v1/passkeys/registration/confirm/verify', { response: proof });
+      optionsJSON = await start();
+    }
     const response = await startRegistration({ optionsJSON });
     return this.call('POST', '/v1/passkeys/registration/verify', { response });
   }
