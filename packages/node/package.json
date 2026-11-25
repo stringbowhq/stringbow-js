@@ -1,0 +1,44 @@
+{
+  "name": "@stringbow/node",
+  "version": "0.1.0",
+  "description": "Stringbow Node SDK: subjects, browser tokens, decisions, permits and webhook verification",
+  "license": "MIT",
+  "homepage": "https://stringbow.dev/docs/node-sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stringbowhq/stringbow-js.git",
+    "directory": "packages/node"
+  },
+  "bugs": "https://github.com/stringbowhq/stringbow-js/issues",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "jose": "^6.0.0"
+  },
+  "devDependencies": {
+    "@stringbow/core": "*"
+  }
+}

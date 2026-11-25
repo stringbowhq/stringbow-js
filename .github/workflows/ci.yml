@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run build
+      - name: The built Node SDK loads as ESM and as CommonJS
+        run: |
+          node --input-type=module -e "const m = await import('@stringbow/node'); if (typeof m.Stringbow !== 'function') process.exit(1)"
+          node -e "if (typeof require('@stringbow/node').Stringbow !== 'function') process.exit(1)"
+      - name: The built browser SDK is there in both formats
+        run: test -s packages/browser/dist/index.js && test -s packages/browser/dist/index.cjs && test -s packages/browser/dist/index.d.ts

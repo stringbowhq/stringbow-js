@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.sdk-tmp/
+*.log
+.DS_Store
