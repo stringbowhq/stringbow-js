@@ -1,14 +1,16 @@
 name: Release
 
-# Publishes both packages to npm when a version tag (v0.1.0) is pushed.
-# Needs the repository secret NPM_TOKEN: an npm automation token allowed to publish to the @stringbow scope.
+# Publishes both packages to npm when a version tag (v0.2.0) is pushed.
+# No npm token is stored anywhere: npm trusts this workflow in this repository (Trusted Publishing, set on each
+# package's settings page on npmjs.com) and exchanges the run's short-lived GitHub identity for publish rights.
+# Renaming this file or the repository breaks that trust until the package settings are updated.
 on:
   push:
     tags: ['v*']
 
 permissions:
   contents: read
-  id-token: write   # npm provenance
+  id-token: write   # the identity npm checks, and provenance
 
 jobs:
   publish:
@@ -22,6 +24,8 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
           cache: npm
+      - name: npm new enough for Trusted Publishing (11.5.1 or later)
+        run: npm install -g npm@^11.5.1 && npm --version
       - run: npm ci --no-audit --no-fund
       - name: The tag matches the package versions
         run: |
@@ -34,5 +38,3 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm publish --workspace @stringbow/browser --workspace @stringbow/node --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
